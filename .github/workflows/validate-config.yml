@@ -1,0 +1,19 @@
+name: Validate supply chain config
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  validate-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate .npmrc settings
+        run: |
+          grep -q 'min-release-age=7' .npmrc
+          grep -q 'ignore-scripts=true' .npmrc
+          grep -q 'save-exact=true' .npmrc
+          grep -q 'package-lock=true' .npmrc
+      - name: Validate .yarnrc.yml settings
+        run: grep -q 'npmMinimalAgeGate: 10080' .yarnrc.yml
