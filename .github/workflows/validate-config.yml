@@ -1,0 +1,23 @@
+name: Validate supply chain config
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  validate-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Assert .npmrc settings are read by npm
+        run: |
+          test "$(npm config get min-release-age)" = "7"
+          test "$(npm config get ignore-scripts)" = "true"
+          test "$(npm config get save-exact)" = "true"
+          test "$(npm config get package-lock)" = "true"
+      - name: Assert .yarnrc.yml file contains npmMinimalAgeGate setting
+        run: |
+          grep -q 'npmMinimalAgeGate: 10080' .yarnrc.yml
